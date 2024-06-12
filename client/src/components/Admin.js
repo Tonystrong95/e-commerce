@@ -56,7 +56,7 @@ export default function Admin() {
       addCategories !== "" &&
       addName !== "" &&
       addDescription !== "" &&
-      addPrice > 0
+      parseInt(addPrice,10) > 0
     ) {
       let res = await fetch("http://localhost:3001/products", {
         method: "PUT",
@@ -90,7 +90,7 @@ export default function Admin() {
       upCategories !== "" &&
       upName !== "" &&
       upDescription !== "" &&
-      upPrice > 0
+      pasreInt(upPrice,10) > 0
     ) {
       let res = await fetch("http://localhost:3001/products", {
         method: "PUT",
