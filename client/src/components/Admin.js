@@ -63,6 +63,7 @@ export default function Admin() {
       addDescription !== "" &&
       parseInt(addPrice, 10) > 0 &&
       addImage.raw != ""
+      parseInt(addPrice,10) > 0
     ) {
       const infoProduct = JSON.stringify({
         method: "add",
@@ -106,8 +107,12 @@ export default function Admin() {
       upCategories !== "" &&
       upName !== "" &&
       upDescription !== "" &&
+<<<<<<< HEAD
       parseInt(upPrice, 10) > 0 &&
       upImage.raw != ""
+=======
+      parseInt(upPrice,10) > 0
+>>>>>>> 33afe4dbb6fc3faad5ffe7d3945769200c1d8a47
     ) {
       const infoProduct = JSON.stringify({
         method: "update",
