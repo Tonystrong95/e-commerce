@@ -1,5 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
+import multer from "multer";
+import sharp from "sharp";
+
 const app = express();
 const port = 3001;
 
@@ -98,77 +101,98 @@ app.get("/products", async (req, res) => {
   }
 });
 
-app.put("/products", async (req, res) => {
+const upload = multer();
+app.put("/products", upload.single("file"), async (req, res) => {
+  console.log(req.file);
+  let compressedImage;
+  let infoProduct;
+
+  if (req.body.product) {
+    compressedImage = await sharp(req.file.buffer)
+      .resize({ width: 500 })
+      .toBuffer();
+
+    infoProduct = JSON.parse(req.body.product);
+  } else {
+    infoProduct = req.body;
+  }
+
   let [found, products] = await getAllProducts();
   if (found) {
-    if (req.body.method === "add") {
-      if (req.body.categories === "clothes") {
+    if (infoProduct.method === "add") {
+      if (infoProduct.categories === "clothes") {
         let nameExists = products[0].clothes.find(
-          (el) => el.name === req.body.name
+          (el) => el.name === infoProduct.name
         );
         if (!nameExists) {
           products[0].clothes = [
             ...products[0].clothes,
             {
-              name: req.body.name,
-              description: req.body.description,
-              price: req.body.price,
+              name: infoProduct.name,
+              description: infoProduct.description,
+              price: infoProduct.price,
+              url: compressedImage,
             },
           ];
         }
       }
-      if (req.body.categories === "vehicles") {
+      if (infoProduct.categories === "vehicles") {
         let nameExists = products[0].vehicles.find(
-          (el) => el.name === req.body.name
+          (el) => el.name === infoProduct.name
         );
         if (!nameExists) {
           products[0].vehicles = [
             ...products[0].vehicles,
             {
-              name: req.body.name,
-              description: req.body.description,
-              price: req.body.price,
+              name: infoProduct.name,
+              description: infoProduct.description,
+              price: infoProduct.price,
+              url: compressedImage,
             },
           ];
         }
       }
-      if (req.body.categories === "bookshop") {
+      if (infoProduct.categories === "bookshop") {
         let nameExists = products[0].bookshop.find(
-          (el) => el.name === req.body.name
+          (el) => el.name === infoProduct.name
         );
         if (!nameExists) {
           products[0].bookshop = [
             ...products[0].bookshop,
             {
-              name: req.body.name,
-              description: req.body.description,
-              price: req.body.price,
+              name: infoProduct.name,
+              description: infoProduct.description,
+              price: infoProduct.price,
+              url: compressedImage,
             },
           ];
         }
       }
-    } else if (req.body.method === "update") {
-      if (req.body.categories === "clothes") {
+    } else if (infoProduct.method === "update") {
+      if (infoProduct.categories === "clothes") {
         for (let i = 0; i < products[0].clothes.length; i++) {
-          if (req.body.name === products[0].clothes[i].name) {
-            products[0].clothes[i].description = req.body.description;
-            products[0].clothes[i].price = req.body.price;
+          if (infoProduct.name === products[0].clothes[i].name) {
+            products[0].clothes[i].description = infoProduct.description;
+            products[0].clothes[i].price = infoProduct.price;
+            products[0].clothes[i].url = compressedImage;
           }
         }
       }
-      if (req.body.categories === "vehicles") {
+      if (infoProduct.categories === "vehicles") {
         for (let j = 0; j < products[0].vehicles.length; j++) {
-          if (req.body.name === products[0].vehicles[j].name) {
-            products[0].vehicles[j].description = req.body.description;
-            products[0].vehicles[j].price = req.body.price;
+          if (infoProduct.name === products[0].vehicles[j].name) {
+            products[0].vehicles[j].description = infoProduct.description;
+            products[0].vehicles[j].price = infoProduct.price;
+            products[0].vehicles[j].url = compressedImage;
           }
         }
       }
-      if (req.body.categories === "bookshop") {
+      if (infoProduct.categories === "bookshop") {
         for (let x = 0; x < products[0].bookshop.length; x++) {
-          if (req.body.name === products[0].bookshop[x].name) {
-            products[0].bookshop[x].description = req.body.description;
-            products[0].bookshop[x].price = req.body.price;
+          if (infoProduct.name === products[0].bookshop[x].name) {
+            products[0].bookshop[x].description = infoProduct.description;
+            products[0].bookshop[x].price = infoProduct.price;
+            products[0].bookshop[x].url = compressedImage;
           }
         }
       }

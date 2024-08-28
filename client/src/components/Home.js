@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
@@ -8,7 +8,7 @@ export default function Home() {
   const [admin, setAdmin] = useState(false);
   const [disabled, setDisabled] = useState("");
   const navigate = useNavigate();
-
+  const elementRef = useRef(null);
   useEffect(() => {
     async function logged() {
       let res = await fetch("http://localhost:3001/login", {
@@ -77,25 +77,26 @@ export default function Home() {
     let res = await fetch("http://localhost:3001/products");
     let json = await res.json();
     localStorage.setItem("products", JSON.stringify({ products: "clothes" }));
-
+    scroll();
     setProducts([...json.products[0].clothes]);
   }
   async function getVehicles() {
     let res = await fetch("http://localhost:3001/products");
     let json = await res.json();
     localStorage.setItem("products", JSON.stringify({ products: "vehicles" }));
-
+    scroll();
     setProducts([...json.products[0].vehicles]);
   }
   async function getBookShop() {
     let res = await fetch("http://localhost:3001/products");
     let json = await res.json();
     localStorage.setItem("products", JSON.stringify({ products: "bookshop" }));
-
+    scroll();
     setProducts([...json.products[0].bookshop]);
   }
   function getAll() {
     setRefresh(!refresh);
+    scroll();
     localStorage.removeItem("products");
   }
   async function addTrolley(name, description, price, images) {
@@ -128,6 +129,10 @@ export default function Home() {
 
   function toAdmin() {
     navigate("/Admin");
+  }
+
+  function scroll() {
+    elementRef.current.scrollTop = 0;
   }
 
   return (
@@ -174,14 +179,21 @@ export default function Home() {
             </ul>
           </div>
         </section>
-        <section className="products">
+        <section className="products" ref={elementRef}>
           {products.map((el) => {
             return (
               <div className="product">
                 <h4 className="name-product">{el.name}</h4>
                 <div className="products-row">
                   <div className="container-image-product">
-                    <img src={el.url} className="img-products" />
+                    <img
+                      src={
+                        el.url.startsWith("\\images")
+                          ? el.url
+                          : `data:image/png;base64,${el.url}`
+                      }
+                      className="img-products"
+                    />
                   </div>
 
                   <div className="description-product">

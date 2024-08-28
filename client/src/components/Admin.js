@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 export default function Admin() {
   const [user, setUser] = useState("");
@@ -6,10 +6,14 @@ export default function Admin() {
   const [addName, setAddName] = useState("");
   const [addDescription, setAddDescription] = useState("");
   const [addPrice, setAddPrice] = useState("");
+  const [addImage, setAddImage] = useState({ raw: "" });
+  const fileInputRef = useRef(null);
   const [upCategories, setUpCategories] = useState("");
   const [upName, setUpName] = useState("");
   const [upDescription, setUpDescription] = useState("");
   const [upPrice, setUpPrice] = useState("");
+  const [upImage, setUpImage] = useState({ raw: "" });
+  const upFileInputRef = useRef(null);
   const [deCategories, setDeCategories] = useState("");
   const [deName, setDeName] = useState("");
   const [disabled, setDisabled] = useState("");
@@ -52,22 +56,32 @@ export default function Admin() {
 
   async function AddProduct() {
     setDisabled("disabled");
+
     if (
       addCategories !== "" &&
       addName !== "" &&
       addDescription !== "" &&
-      addPrice > 0
+      parseInt(addPrice, 10) > 0 &&
+      addImage.raw != ""
     ) {
+      const infoProduct = JSON.stringify({
+        method: "add",
+        categories: addCategories,
+        name: addName,
+        description: addDescription,
+        price: addPrice,
+      });
+      const formData = new FormData();
+      formData.append("product", infoProduct);
+      formData.append("file", addImage.raw);
+      console.log("entrato qui");
       let res = await fetch("http://localhost:3001/products", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          method: "add",
-          categories: addCategories,
-          name: addName,
-          description: addDescription,
-          price: addPrice,
-        }),
+        // headers: { "Content-Type": "application/json" },
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+        body: formData,
       });
       let json = await res.json();
       if (json.data === 0) {
@@ -81,6 +95,8 @@ export default function Admin() {
     setAddName("");
     setAddDescription("");
     setAddPrice("");
+    setAddImage({ raw: "" });
+    fileInputRef.current.value = null;
     setDisabled("");
   }
 
@@ -90,18 +106,26 @@ export default function Admin() {
       upCategories !== "" &&
       upName !== "" &&
       upDescription !== "" &&
-      upPrice > 0
+      parseInt(upPrice, 10) > 0 &&
+      upImage.raw != ""
     ) {
+      const infoProduct = JSON.stringify({
+        method: "update",
+        categories: upCategories,
+        name: upName,
+        description: upDescription,
+        price: upPrice,
+      });
+      const formData = new FormData();
+      formData.append("product", infoProduct);
+      formData.append("file", upImage.raw);
       let res = await fetch("http://localhost:3001/products", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          method: "update",
-          categories: upCategories,
-          name: upName,
-          description: upDescription,
-          price: upPrice,
-        }),
+        // headers: { "Content-Type": "application/json" },
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+        body: formData,
       });
       let json = await res.json();
       if (json.data === 0) {
@@ -115,6 +139,8 @@ export default function Admin() {
     setUpName("");
     setUpDescription("");
     setUpPrice("");
+    setUpImage({ raw: "" });
+    upFileInputRef.current.value = null;
     setDisabled("");
   }
 
@@ -204,6 +230,12 @@ export default function Admin() {
               </div>
             </div>
             <div className="button-add-admin">
+              <span>ADD PHOTO</span>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={(e) => setAddImage({ raw: e.target.files[0] })}
+              ></input>
               <button onClick={AddProduct} disabled={disabled}>
                 ADD PRODUCT
               </button>
@@ -248,6 +280,11 @@ export default function Admin() {
               </div>
             </div>
             <div className="button-update-admin">
+              <span>PHOTO</span>
+              <input
+                type="file"
+                onChange={(e) => setUpImage({ raw: e.target.files[0] })}
+              ></input>
               <button onClick={updateProduct} disabled={disabled}>
                 UPDATE PRODUCT
               </button>

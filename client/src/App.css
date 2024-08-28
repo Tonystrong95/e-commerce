@@ -291,6 +291,7 @@ ul {
   border: none;
   background-color: var(--color-button);
   color: var(--color-button-text);
+  cursor: pointer;
 }
 
 .product {
@@ -570,7 +571,7 @@ ul {
 .update-product {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
 }
 
 .container-add,
@@ -624,6 +625,13 @@ ul {
   border-radius: 10px;
 }
 
+.button-add-admin > span,
+.button-update-admin > span {
+  color: black;
+  margin-right: 10px;
+  font-weight: 450;
+}
+
 @media (max-width: 800px) {
   .product-trolley {
     display: flex;
@@ -648,7 +656,7 @@ ul {
   }
 
   .main-admin {
-    height: 1650px;
+    height: 1780px;
     background-color: var(--background);
   }
 
@@ -667,7 +675,7 @@ ul {
   .update-product {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 30px;
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
@@ -693,8 +701,11 @@ ul {
 
   .button-add-admin,
   .button-update-admin {
-    align-self: center;
-    margin-right: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
   }
 
   .container-delete {
